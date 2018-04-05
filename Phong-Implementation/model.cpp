@@ -14,7 +14,8 @@ Model::Model() {
 }
 
 Model::~Model() {
-    // clean up dynamic data
+    this->object.color = Color();
+    this->object.material = Material();
 }
 
 void Model::SetCamera(Point camera) {
@@ -22,7 +23,8 @@ void Model::SetCamera(Point camera) {
 }
 
 void Model::SetLight(Light light) {
-    this->light = light;
+    this->light.color = light.color;
+    this->light.direction = normalize(light.direction);
 }
 
 void Model::SetObject(Object object) {
@@ -32,19 +34,20 @@ void Model::SetObject(Object object) {
 Color Model::getShade(Point point, Point normal) {
     Color lightIntensity = calculateLightIntensity();
     
-    Color ambient = calculateLightAspect(lightIntensity, object.material.a);
-
-    float multiplier_d = object.material.d * dot(light.direction, normal);
-    Color diffuse = multiplier_d < 0 ? Color() : calculateLightAspect(lightIntensity, multiplier_d);
-        
     Point V = normalize(calculateVector(camera, point));
-    Point R = normalize(calculateVector(normal, light.direction));
-    float VdotR = dot(V, R);
+    Point R = normalize(calculateVector(normalize(normal), light.direction));
 
+    float VdotR = dot(V, R);
+    float LdotN = dot(light.direction, normalize(normal));
+
+    float multiplier_d = LdotN < 0 ? 0 : object.material.d * LdotN;
     float multiplier_s = VdotR < 0 ? 0 : object.material.s * pow(dot(V, R), object.material.alpha);
+    
+    Color ambient = calculateLightAspect(lightIntensity, object.material.a);
+    Color diffuse = calculateLightAspect(lightIntensity, multiplier_d);
     Color specular = calculateLightAspect(light.color, multiplier_s);
     
-    return Color(ambient.r + diffuse.r + specular.b, 
+    return Color(ambient.r + diffuse.r + specular.r, 
                 ambient.g + diffuse.g + specular.g, 
                 ambient.b + diffuse.b + specular.b);
 }

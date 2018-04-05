@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <string>
 #include <sstream>
@@ -12,8 +13,8 @@ ifstream input;
 ofstream output;
 
 void printOutput(Point p, Color c) {
-    output << p.x << ", " << p.y << ", " << p.z << " -> ";
-    output << c.r << ", " << c.g << ", " << c.b << endl;
+    output << setprecision(3) << p.x << ", " << p.y << ", " << p.z << " -> ";
+    output << setprecision(3) << c.r << ", " << c.g << ", " << c.b << endl;
 }
 
 void readInput() {
@@ -78,9 +79,6 @@ void readInput() {
             }
         }
     }
-
-
-   
 }
 
 int main()

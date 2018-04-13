@@ -41,7 +41,7 @@ Color Model::getShade(Point point, Point normal) {
     float LdotN = dot(light.direction, normalize(normal));
 
     float multiplier_d = LdotN < 0 ? 0 : object.material.d * LdotN;
-    float multiplier_s = VdotR < 0 ? 0 : object.material.s * pow(dot(V, R), object.material.alpha);
+    float multiplier_s = VdotR < 0 ? 0 : object.material.s * pow(VdotR, object.material.alpha);
     
     Color ambient = calculateLightAspect(lightIntensity, object.material.a);
     Color diffuse = calculateLightAspect(lightIntensity, multiplier_d);
